@@ -20,11 +20,12 @@ import { asciiFoldStyle } from './asciifold';
 import { toonStyle } from './toon';
 import { surfaceStyle } from './surface';
 import { frostedStyle } from './frosted';
+import { donghoStyle } from './dongho';
 
 /** Style registry. To add a style: create src/art/<name>/index.ts exporting an ArtStyle and register it here. */
 const styles: ArtStyle[] = [
   normalStyle, schieleStyle, picassoStyle, klimtStyle, vanGoghStyle, daliStyle,
-  monetStyle, hokusaiStyle, okeeffeStyle, warholStyle, pollockStyle, kandinskyStyle, matisseStyle, mondrianStyle, sumieStyle, davinciStyle, glassStyle, asciiFoldStyle, toonStyle, surfaceStyle, frostedStyle,
+  monetStyle, hokusaiStyle, okeeffeStyle, warholStyle, pollockStyle, kandinskyStyle, matisseStyle, mondrianStyle, sumieStyle, davinciStyle, glassStyle, asciiFoldStyle, toonStyle, surfaceStyle, frostedStyle, donghoStyle,
 ];
 
 export function registerStyle(s: ArtStyle) {

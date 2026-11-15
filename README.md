@@ -12,11 +12,26 @@ molart loads a PDB or mmCIF file, draws the usual protein cartoon, and then redr
 
 Egon Schiele, Pablo Picasso, Gustav Klimt, Vincent van Gogh, Salvador Dalí, Claude Monet,
 Katsushika Hokusai, Georgia O'Keeffe, Andy Warhol, Jackson Pollock, Wassily Kandinsky,
-Henri Matisse, Piet Mondrian and Leonardo da Vinci, and the sumi-e ink tradition.
+Henri Matisse, Piet Mondrian and Leonardo da Vinci, the sumi-e ink tradition, and Vietnamese
+Đông Hồ folk woodblock prints.
 
 The styles are a tribute, not the artists' work: each is our own reimagination, drawn by code.
 
 Further styles: glass, frosted, cartoon, surface and ASCII.
+
+## Đông Hồ style
+
+<img src="docs/dongho-1tim.png" alt="1TIM rendered as a Đông Hồ woodblock print" width="360">
+
+`--style dongho` prints the protein the way Đông Hồ village prints Tết pictures: flat natural pigments
+(laterite red helices, verdigris leaf strands, sophora-yellow loops, indigo undersides), comb hatching and
+âm dương swirls cut in black, colour blocks slightly out of register with a thick charcoal key line.
+`scripts/dongho_paper.py` lays a render onto shimmering giấy điệp paper with a printed frame:
+
+```sh
+node cli/molart.mjs render public/samples/1TIM.cif --style dongho --output 1tim.png
+python3 scripts/dongho_paper.py 1tim.png 1tim_dongho.png
+```
 
 ## Features
 
