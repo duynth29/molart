@@ -70,6 +70,18 @@ node cli/molart.mjs styles                                      # list the print
 python3 scripts/dongho_paper.py plain.png print.png         # same paper as a standalone script (Pillow, numpy)
 ```
 
+## Promo video
+
+`scripts/promo.mjs` renders the protein spinning through every print (bottom half) and
+`scripts/promo_compose.py` lays the original prints above it and encodes a 15-second 1080 × 1920 reel.
+Put photos or scans of the original prints in `out/originals/` (file names are listed in `ORIGINALS` in the
+compose script; they are not part of the repo), then:
+
+```sh
+node scripts/promo.mjs public/samples/1TIM.cif out/promo --seconds 15 --turns 1
+python3 scripts/promo_compose.py out/promo out/reel.mp4 --originals out/originals   # add --test for stills only
+```
+
 ## Credits
 
 - Fork of [molart](https://github.com/martin-steinegger/molart) by Martin Steinegger, which renders the
