@@ -310,8 +310,8 @@ export class App {
       h('section', {}, h('h2', {}, 'Structure'), h('div', { class: 'row' }, openBtn, file, sampleSel), h('div', { class: 'row' }, pdbId, fetchBtn)),
       h('section', {}, h('h2', {}, 'Picture'), h('div', { class: 'row' }, h('label', {}, 'Seed ', seed), size), h('div', { class: 'row' }, resetBtn, camBtn, galleryBtn)),
       h('section', {}, h('h2', {}, 'Light'), h('div', { class: 'row light' }, lightOn, lightAngle, lightColor)),
-      h('section', {}, h('h2', {}, 'Style'), technique),
-      h('section', {}, h('h2', {}, 'About'), els.info, h('p', { class: 'technique' }, 'Drag to rotate, scroll to zoom, right-drag to pan. R resets the view; keys 1–9 and 0 switch styles.')),
+      h('section', {}, h('h2', {}, 'Style'), technique, h('p', { class: 'technique' }, h('a', { href: 'https://en.wikipedia.org/wiki/%C4%90%C3%B4ng_H%E1%BB%93_painting', target: '_blank', rel: 'noopener' }, 'What is Đông Hồ painting? (Wikipedia)'))),
+      h('section', {}, h('h2', {}, 'About'), els.info, h('p', { class: 'technique' }, 'Drag to rotate, scroll to zoom, right-drag to pan. R resets the view.'), h('p', { class: 'technique' }, h('a', { href: 'https://github.com/duynth29/molart', target: '_blank', rel: 'noopener' }, 'Source code on GitHub'), ' · fork of ', h('a', { href: 'https://github.com/martin-steinegger/molart', target: '_blank', rel: 'noopener' }, 'molart'))),
     );
     const setDrawer = (open: boolean) => {
       drawer.classList.toggle('open', open);
@@ -323,7 +323,7 @@ export class App {
     closeBtn.addEventListener('click', () => setDrawer(false));
     scrim.addEventListener('click', () => setDrawer(false));
     window.addEventListener('keydown', (e) => e.key === 'Escape' && setDrawer(false));
-    const top = h('div', { class: 'top' }, h('div', { class: 'brand' }, h('h1', {}, 'molart'), els.name, els.hint), h('div', { class: 'row' }, paperLabel, moreBtn, exportBtn));
+    const top = h('div', { class: 'top' }, h('div', { class: 'brand' }, h('h1', {}, 'molart'), h('a', { class: 'about', href: 'https://en.wikipedia.org/wiki/%C4%90%C3%B4ng_H%E1%BB%93_painting', target: '_blank', rel: 'noopener', title: 'Đông Hồ painting on Wikipedia' }, 'Đông Hồ painting ↗'), h('a', { class: 'about', href: 'https://github.com/duynth29/molart', target: '_blank', rel: 'noopener', title: 'Source code on GitHub' }, 'GitHub ↗'), els.name, els.hint), h('div', { class: 'row' }, paperLabel, moreBtn, exportBtn));
     const dock = h(
       'footer',
       { class: 'dock' },

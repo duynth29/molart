@@ -13,7 +13,7 @@ import { ArtStyle, baseInk } from '../types';
  */
 export const donghoStyle: ArtStyle = {
   id: 'dongho',
-  label: 'Đông Hồ',
+  label: 'Đông Hồ painting (Northern Vietnamese traditional art)',
   technique: 'Vietnamese folk woodblock: flat natural pigments (laterite red, sophora yellow, verdigris, indigo) printed out of register, comb hatching and âm dương swirls cut in black, shimmering điệp paper, thick charcoal key-block line.',
   mesh: 'smooth',
   ribbon: { helixWidth: 3.2, helixThickness: 0.28, strandWidth: 2.9, strandThickness: 0.3, arrowWidth: 4.4, coilWidth: 1.15, coilThickness: 0.3, coilFlatness: 7, flatness: 12 },

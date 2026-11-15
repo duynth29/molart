@@ -1,12 +1,13 @@
-# molart — Đông Hồ
+# molart — Đông Hồ painting
 
-**Website: https://duynth29.github.io/molart/**
+**Website: https://duynth29.github.io/molart/** · **Repo: https://github.com/duynth29/molart**
 
-Real protein structures drawn as Vietnamese **Đông Hồ** folk woodblock prints, in the browser.
+Real protein structures drawn as [**Đông Hồ painting**](https://en.wikipedia.org/wiki/%C4%90%C3%B4ng_H%E1%BB%93_painting) (Northern Vietnamese traditional art):
+folk woodblock prints from Đông Hồ village, in the browser.
 
 <img src="docs/dongho-1tim.png" alt="1TIM rendered as a Đông Hồ woodblock print" width="360">
 
-Đông Hồ village (Bắc Ninh) has printed pictures for Tết for centuries: one carved block per colour,
+[Đông Hồ painting](https://en.wikipedia.org/wiki/%C4%90%C3%B4ng_H%E1%BB%93_painting) is a Northern Vietnamese folk art: Đông Hồ village (Bắc Ninh) has printed pictures for Tết for centuries, one carved block per colour,
 natural pigments on dó paper coated with điệp (crushed scallop shell), and a black key block pressed last.
 This renderer prints the protein the same way:
 

@@ -163,3 +163,6 @@ input[type='checkbox'] { accent-color: var(--ink); padding: 0; }
 .light input[type='range'] { flex: 1; min-width: 0; width: auto; }
 #sunBtn[aria-pressed='true'] { background: var(--ink); color: var(--on-ink); }
 .paper { display: flex; gap: 4px; align-items: center; white-space: nowrap; cursor: pointer; }
+.brand .about { font-size: 13px; color: var(--muted); white-space: nowrap; flex: none; }
+.brand .about:hover { color: var(--ink); }
+@media (max-width: 560px) { .brand .about + .about { display: none; } }
