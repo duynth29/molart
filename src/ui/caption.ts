@@ -5,7 +5,7 @@
  */
 
 export type CaptionPosition = 'top' | 'bottom' | 'side';
-export type CaptionFont = 'serif' | 'brush';
+export type CaptionFont = 'sign' | 'serif' | 'brush';
 export type CaptionColor = 'black' | 'red';
 
 export interface Caption {
@@ -15,13 +15,15 @@ export interface Caption {
   color: CaptionColor;
 }
 
-export const defaultCaption: Caption = { text: '', position: 'top', font: 'serif', color: 'black' };
+export const defaultCaption: Caption = { text: '', position: 'top', font: 'sign', color: 'black' };
 
 const FAMILY: Record<CaptionFont, string> = {
+  // rounded, boxy sign-painter capitals in the spirit of VPS Đồng Hới, with full Unicode Vietnamese (SIL OFL)
+  sign: '"Bungee", "Chakra Petch", Impact, sans-serif',
   serif: '"Playfair Display", "Noto Serif", Georgia, serif',
   brush: '"Dancing Script", "Brush Script MT", cursive',
 };
-const WEIGHT: Record<CaptionFont, number> = { serif: 900, brush: 700 };
+const WEIGHT: Record<CaptionFont, number> = { sign: 400, serif: 900, brush: 700 };
 const INK: Record<CaptionColor, [number, number, number]> = { black: [28, 26, 23], red: [178, 52, 34] };
 
 export function sanitizeCaption(c: unknown): Caption {
@@ -29,7 +31,7 @@ export function sanitizeCaption(c: unknown): Caption {
   return {
     text: typeof o.text === 'string' ? o.text.slice(0, 200) : '',
     position: o.position === 'bottom' || o.position === 'side' ? o.position : 'top',
-    font: o.font === 'brush' ? 'brush' : 'serif',
+    font: o.font === 'brush' || o.font === 'serif' ? o.font : 'sign',
     color: o.color === 'red' ? 'red' : 'black',
   };
 }

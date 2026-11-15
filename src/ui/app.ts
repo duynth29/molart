@@ -269,7 +269,7 @@ export class App {
       return e;
     };
     const capPos = sel('Text position', [['top', 'Top'], ['bottom', 'Bottom'], ['side', 'Side column']], cap.position);
-    const capFont = sel('Text font', [['serif', 'Woodblock serif'], ['brush', 'Brush script']], cap.font);
+    const capFont = sel('Text font', [['sign', 'Sign-painted'], ['serif', 'Woodblock serif'], ['brush', 'Brush script']], cap.font);
     const capColor = sel('Text colour', [['black', 'Black ink'], ['red', 'Red ink']], cap.color);
     const capChange = () => {
       this.settings.caption = sanitizeCaption({ text: capText.value, position: capPos.value, font: capFont.value, color: capColor.value });

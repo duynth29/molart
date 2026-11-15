@@ -15,7 +15,7 @@ usage:
   molart render  <file.pdb|.cif> --style <id> [--width 2400] [--height 2400] [--seed 42]
                  [--deform 0..1] [--colors '#aaaaaa,#bbbbbb'] [--camera cam.json] [--chains A,B]
                  [--chain-styles A=dongho] [--no-faces] [--ascii 0..1] [--art] [--plain]
-                 [--text 'Phúc Lộc Thọ'] [--text-position top|bottom|side] [--text-font serif|brush] [--text-color black|red]
+                 [--text 'Phúc Lộc Thọ'] [--text-position top|bottom|side] [--text-font sign|serif|brush] [--text-color black|red]
                  [--output out.png]
   molart gallery <file.pdb|.cif> [--styles dongho]
                  [--size 1024] [--seed 42] [--deform 0..1] [--camera cam.json] [--chains A]
@@ -99,7 +99,7 @@ async function prepare(page, args, file) {
     if (!(v >= 0 && v <= 1)) throw new Error(`--ascii expects a number from 0 to 1 (got "${args.ascii}")`);
     await page.evaluate((x) => window.molart.setAsciiAmount(x), v);
   }
-  await page.evaluate((c) => window.molart.setCaption(c), args.text ? { text: String(args.text), position: args['text-position'] ?? 'top', font: args['text-font'] ?? 'serif', color: args['text-color'] ?? 'black' } : null);
+  await page.evaluate((c) => window.molart.setCaption(c), args.text ? { text: String(args.text), position: args['text-position'] ?? 'top', font: args['text-font'] ?? 'sign', color: args['text-color'] ?? 'black' } : null);
   if (args.chains) await page.evaluate((c) => window.molart.frameChains(c.split(',')), args.chains);
   else await page.evaluate(() => window.molart.resetCamera());
   if (args.camera) await page.evaluate((c) => window.molart.setCamera(c), JSON.parse(readFileSync(args.camera, 'utf8')));

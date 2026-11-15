@@ -36,7 +36,7 @@ shape is never changed into the print's figures):
 ## Text
 
 Add a title or verse to the exported print (the **Text** button): across the top, along the bottom, or as a
-vertical column of words at the side; woodblock serif or brush script; black or red ink. Vietnamese diacritics
+vertical column of words at the side; sign-painted capitals (Bungee, the default), woodblock serif or brush script; black or red ink. Vietnamese diacritics
 are supported, and the protein shrinks to leave room for the words.
 
 ## Features
