@@ -1,5 +1,6 @@
 import { loadStructure } from '../io/load';
 import { printOnPaper } from './paper';
+import { Caption, drawCaption, loadCaptionFont, makeRoom, sanitizeCaption } from './caption';
 import { coordinateFingerprint, Structure } from '../model/structure';
 import { allStyles, getStyle } from '../art/registry';
 import { CameraState, MolartRenderer, RENDERER_VERSION } from '../renderer/renderer';
@@ -20,6 +21,8 @@ interface Settings {
   exportSize: number;
   /** export onto điệp paper with a printed frame (default) instead of plain white */
   paper?: boolean;
+  /** text printed on the export */
+  caption?: Caption;
   /** User-chosen colours per style id (two sRGB hex strings), for styles that offer a colour choice. */
   colors?: Record<string, [string, string]>;
   /** Per-structure chain styles: structure id → (chain id → style id). Chains not listed use the main style. */
@@ -141,6 +144,7 @@ export class App {
     if (!this.settings.deforms) this.settings.deforms = this.settings.deform > 0 ? { dali: this.settings.deform } : {};
     this.settings.deform = this.deformFor(this.settings.style);
     this.settings.exportSize = Math.round(num(this.settings.exportSize, 2048, 256, 8192));
+    this.settings.caption = sanitizeCaption(this.settings.caption);
     if (!this.settings.colors || typeof this.settings.colors !== 'object') this.settings.colors = {};
     this.settings.faces = this.settings.faces !== false;
     this.settings.asciiAmount = num(this.settings.asciiAmount, 0.5, 0, 1);
@@ -256,6 +260,29 @@ export class App {
       this.saveSettings();
     });
     const paperLabel = h('label', { class: 'paper', for: 'paperBox', title: 'Export on giấy điệp paper with a printed frame' }, paperBox, ' Paper & frame');
+    let setDrawerRef: ((open: boolean) => void) | undefined;
+    const cap = this.settings.caption!;
+    const capText = h('input', { type: 'text', value: cap.text, maxlength: '200', placeholder: 'e.g. Phúc Lộc Thọ', 'aria-label': 'Text on the print', style: 'flex:1;min-width:0' }) as HTMLInputElement;
+    const sel = (label: string, opts: [string, string][], v: string) => {
+      const e = h('select', { 'aria-label': label }, ...opts.map(([val, t]) => h('option', { value: val }, t))) as HTMLSelectElement;
+      e.value = v;
+      return e;
+    };
+    const capPos = sel('Text position', [['top', 'Top'], ['bottom', 'Bottom'], ['side', 'Side column']], cap.position);
+    const capFont = sel('Text font', [['serif', 'Woodblock serif'], ['brush', 'Brush script']], cap.font);
+    const capColor = sel('Text colour', [['black', 'Black ink'], ['red', 'Red ink']], cap.color);
+    const capChange = () => {
+      this.settings.caption = sanitizeCaption({ text: capText.value, position: capPos.value, font: capFont.value, color: capColor.value });
+      this.saveSettings();
+    };
+    capText.addEventListener('input', capChange);
+    for (const e of [capPos, capFont, capColor]) e.addEventListener('change', capChange);
+    const textSection = h('section', {}, h('h2', {}, 'Text on the print'), h('div', { class: 'row' }, capText), h('div', { class: 'row' }, capPos, capFont, capColor), h('p', { class: 'technique' }, 'Printed on the exported picture (not in the live view). Vietnamese diacritics are supported.'));
+    const textBtn = h('button', { title: 'Add text to the exported print' }, 'Text');
+    textBtn.addEventListener('click', () => {
+      setDrawerRef?.(true);
+      setTimeout(() => capText.focus(), 50);
+    });
     const exportBtn = h('button', { class: 'primary' }, 'Export');
     exportBtn.addEventListener('click', () => void this.downloadPNG());
     const galleryBtn = h('button', {}, 'Same-view gallery');
@@ -296,8 +323,13 @@ export class App {
     els.name = h('span', { class: 'name' });
     // a quiet invitation beside the sample's name; it goes away once the user's own structure is shown
     const touch = typeof matchMedia === 'function' && matchMedia('(hover: none)').matches;
-    els.hint = h('button', { class: 'quiet hint hidden', id: 'ownHint', title: 'Open a .pdb, .cif or .mmcif file. It stays in your browser.' }, touch ? 'or open your own file' : 'or drop your own file');
-    els.hint.addEventListener('click', () => file.click());
+    els.hint = h('span', { class: 'hint hidden', id: 'ownHint' }, touch ? 'or open your own file' : 'or drop your own file');
+    // the structure chip: what is loaded, and the way to load your own (sits next to the print styles)
+    const fileIcon = h('span', { class: 'icon', 'aria-hidden': 'true' });
+    fileIcon.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M12 18v-6"/><path d="M9.5 14.5 12 12l2.5 2.5"/></svg>';
+    const fileChip = h('button', { class: 'filechip', title: 'Open a .pdb, .cif or .mmcif file (or drop it on the page). It stays in your browser.' }, fileIcon, els.name, els.hint);
+    fileChip.addEventListener('click', () => file.click());
+    els.fileChip = fileChip;
     const openBtn = h('button', {}, 'Open file…');
     openBtn.addEventListener('click', () => file.click());
     const moreBtn = h('button', { id: 'moreBtn', class: 'round', 'aria-label': 'More', 'aria-expanded': 'false', title: 'More' }, '···');
@@ -309,6 +341,7 @@ export class App {
       h('header', {}, h('h1', {}, 'molart'), closeBtn),
       h('section', {}, h('h2', {}, 'Structure'), h('div', { class: 'row' }, openBtn, file, sampleSel), h('div', { class: 'row' }, pdbId, fetchBtn)),
       h('section', {}, h('h2', {}, 'Picture'), h('div', { class: 'row' }, h('label', {}, 'Seed ', seed), size), h('div', { class: 'row' }, resetBtn, camBtn, galleryBtn)),
+      textSection,
       h('section', {}, h('h2', {}, 'Light'), h('div', { class: 'row light' }, lightOn, lightAngle, lightColor)),
       h('section', {}, h('h2', {}, 'Style'), technique, h('p', { class: 'technique' }, h('a', { href: 'https://en.wikipedia.org/wiki/%C4%90%C3%B4ng_H%E1%BB%93_painting', target: '_blank', rel: 'noopener' }, 'What is Đông Hồ painting? (Wikipedia)'))),
       h('section', {}, h('h2', {}, 'About'), els.info, h('p', { class: 'technique' }, 'Drag to rotate, scroll to zoom, right-drag to pan. R resets the view.'), h('p', { class: 'technique' }, h('a', { href: 'https://github.com/duynth29/molart', target: '_blank', rel: 'noopener' }, 'Source code on GitHub'), ' · fork of ', h('a', { href: 'https://github.com/martin-steinegger/molart', target: '_blank', rel: 'noopener' }, 'molart'))),
@@ -319,16 +352,17 @@ export class App {
       scrim.classList.toggle('hidden', !open);
       moreBtn.setAttribute('aria-expanded', String(open));
     };
+    setDrawerRef = setDrawer;
     moreBtn.addEventListener('click', () => setDrawer(!drawer.classList.contains('open')));
     closeBtn.addEventListener('click', () => setDrawer(false));
     scrim.addEventListener('click', () => setDrawer(false));
     window.addEventListener('keydown', (e) => e.key === 'Escape' && setDrawer(false));
-    const top = h('div', { class: 'top' }, h('div', { class: 'brand' }, h('h1', {}, 'molart'), h('a', { class: 'about', href: 'https://en.wikipedia.org/wiki/%C4%90%C3%B4ng_H%E1%BB%93_painting', target: '_blank', rel: 'noopener', title: 'Đông Hồ painting on Wikipedia' }, 'Đông Hồ painting ↗'), h('a', { class: 'about', href: 'https://github.com/duynth29/molart', target: '_blank', rel: 'noopener', title: 'Source code on GitHub' }, 'GitHub ↗'), els.name, els.hint), h('div', { class: 'row' }, paperLabel, moreBtn, exportBtn));
+    const top = h('div', { class: 'top' }, h('div', { class: 'brand' }, h('h1', {}, 'molart'), h('a', { class: 'about', href: 'https://en.wikipedia.org/wiki/%C4%90%C3%B4ng_H%E1%BB%93_painting', target: '_blank', rel: 'noopener', title: 'Đông Hồ painting on Wikipedia' }, 'Đông Hồ painting ↗'), h('a', { class: 'about', href: 'https://github.com/duynth29/molart', target: '_blank', rel: 'noopener', title: 'Source code on GitHub' }, 'GitHub ↗')), h('div', { class: 'row' }, paperLabel, textBtn, moreBtn, exportBtn));
     const dock = h(
       'footer',
       { class: 'dock' },
       h('div', { class: 'context' }, deformBox, colorBox, facesBox, asciiBox),
-      styleBtns,
+      h('div', { class: 'pick' }, els.fileChip, h('div', { class: 'styleline' }, h('span', { class: 'stylehead', title: 'Đông Hồ painting — Northern Vietnamese traditional art. Each button prints the protein in the palette and motifs of a well-known print.' }, 'Đông Hồ painting:'), styleBtns)),
       // bottom row: Science | Art, what the style applies to, and a short label while the picture is an interpretation
       h('div', { class: 'bar' }, artBox, els.chainBox, artWarn, deformWarn),
     );
@@ -671,10 +705,21 @@ export class App {
     this.saveSettings();
   }
 
-  /** Post-process for exports: print onto điệp paper, with the paper's grain fixed by the seed. */
-  paperPost() {
+  /** Post-process for exports: print onto điệp paper (grain fixed by the seed), then the text. */
+  async exportPost(paper: boolean) {
     const seed = this.settings.seed;
-    return (px: Uint8ClampedArray, w: number, h: number) => printOnPaper(px, w, h, seed);
+    const cap = sanitizeCaption(this.settings.caption);
+    await loadCaptionFont(cap);
+    return (px: Uint8ClampedArray, w: number, h: number) => {
+      makeRoom(px, w, h, cap);
+      if (paper) printOnPaper(px, w, h, seed);
+      drawCaption(px, w, h, cap, seed);
+    };
+  }
+
+  setCaption(c: Partial<Caption> | null) {
+    this.settings.caption = sanitizeCaption(c ? { ...this.settings.caption, ...c } : null);
+    this.saveSettings();
   }
 
   /** Export: show the PNG in a dialog (works where downloads are blocked) with a download link. */
@@ -682,7 +727,7 @@ export class App {
     if (!this.structure) return;
     const n = this.settings.exportSize;
     const paper = this.settings.paper !== false;
-    const blob = await this.r.exportPNG(n, n, paper ? this.paperPost() : undefined);
+    const blob = await this.r.exportPNG(n, n, await this.exportPost(paper));
     const name = `${this.structure.id}-${this.settings.style}-seed${this.settings.seed}-${n}${paper ? '-print' : ''}.png`;
     this.showImageDialog(blob, name, `${name} · ${n} × ${n} px · ${paper ? 'on điệp paper with frame' : 'opaque white background'}`, `Exported ${this.settings.style} rendering of ${this.structure.id}`);
   }

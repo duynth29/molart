@@ -1,8 +1,8 @@
 import type { ArtStyle } from './types';
-import { donghoStyle } from './dongho';
+import { donghoStyles } from './dongho';
 
 /** Style registry. To add a style: create src/art/<name>/index.ts exporting an ArtStyle and register it here. */
-const styles: ArtStyle[] = [donghoStyle];
+const styles: ArtStyle[] = [...donghoStyles];
 
 export function registerStyle(s: ArtStyle) {
   const i = styles.findIndex((x) => x.id === s.id);

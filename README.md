@@ -18,6 +18,27 @@ This renderer prints the protein the same way:
 - Colour blocks printed slightly out of register with a thick charcoal (than lá tre) key line; pigment
   sits unevenly and the shell coating glints through where the block printed thin.
 
+## Prints
+
+Choose a well-known Đông Hồ print; each lends its palette and motifs to the ribbons (the protein's
+shape is never changed into the print's figures):
+
+| Print | Helices | Strands |
+|---|---|---|
+| Lợn nái (Sow) | laterite red, comb bristles, âm dương swirls | verdigris leaves |
+| Gà trống (Rooster) | red and yellow feather rows | dark green tail feathers |
+| Đám cưới chuột (Mouse Wedding) | grey fur strokes | wedding red with dots |
+| Vinh hoa · Phú quý | peach lotus petals | green pond waves |
+| Hứng dừa (Coconuts) | palm-green fronds | ringed coconut trunks |
+| Thầy đồ cóc (Toad Teacher) | warty olive toad skin | indigo scholar robes |
+| Bà Triệu · Hai Bà Trưng | red armour scales, gold edges | gold banners |
+
+## Text
+
+Add a title or verse to the exported print (the **Text** button): across the top, along the bottom, or as a
+vertical column of words at the side; woodblock serif or brush script; black or red ink. Vietnamese diacritics
+are supported, and the protein shrinks to leave room for the words.
+
 ## Features
 
 - **Coordinates never change.** Every effect lives in display geometry and shaders.
@@ -44,6 +65,8 @@ Renders with the same code as the app, in headless Chromium
 
 ```sh
 node cli/molart.mjs render public/samples/1TIM.cif --width 2400 --height 2400 --output 1tim.png   # on paper; --plain for white
+node cli/molart.mjs render public/samples/1TIM.cif --style dongho-ga --text 'Phúc Lộc Thọ' --text-position side --text-color red --output ga.png
+node cli/molart.mjs styles                                      # list the prints
 python3 scripts/dongho_paper.py plain.png print.png         # same paper as a standalone script (Pillow, numpy)
 ```
 
