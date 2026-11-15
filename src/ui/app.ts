@@ -111,7 +111,7 @@ export class App {
       style: 'dongho',
       seed: 7,
       deform: 0,
-      exportSize: 2048,
+      exportSize: 1024,
       ...(store.get<Settings>(SETTINGS_KEY) ?? {}),
     };
     // Safe start: if the page died while drawing something last time, do not walk into the same state again.
@@ -143,7 +143,7 @@ export class App {
     this.settings.deform = num(this.settings.deform, 0, 0, 1);
     if (!this.settings.deforms) this.settings.deforms = this.settings.deform > 0 ? { dali: this.settings.deform } : {};
     this.settings.deform = this.deformFor(this.settings.style);
-    this.settings.exportSize = Math.round(num(this.settings.exportSize, 2048, 256, 8192));
+    this.settings.exportSize = Math.round(num(this.settings.exportSize, 1024, 256, 8192));
     this.settings.caption = sanitizeCaption(this.settings.caption);
     if (!this.settings.colors || typeof this.settings.colors !== 'object') this.settings.colors = {};
     this.settings.faces = this.settings.faces !== false;

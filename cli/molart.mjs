@@ -12,7 +12,7 @@ const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const USAGE = `molart — artist-inspired renderings of real protein structures
 
 usage:
-  molart render  <file.pdb|.cif> --style <id> [--width 2400] [--height 2400] [--seed 42]
+  molart render  <file.pdb|.cif> --style <id> [--width 1024] [--height 1024] [--seed 42]
                  [--deform 0..1] [--colors '#aaaaaa,#bbbbbb'] [--camera cam.json] [--chains A,B]
                  [--chain-styles A=dongho] [--no-faces] [--ascii 0..1] [--art] [--plain]
                  [--text 'Phúc Lộc Thọ'] [--text-position top|bottom|side] [--text-font sign|serif|brush] [--text-color black|red]
@@ -121,7 +121,7 @@ async function main() {
   if (!file || !existsSync(file)) throw new Error(`Structure file not found: ${file ?? '(missing)'}\n\n${USAGE}`);
 
   if (cmd === 'render') {
-    const w = parseInt(args.width ?? '2400', 10), h = parseInt(args.height ?? args.width ?? '2400', 10);
+    const w = parseInt(args.width ?? '1024', 10), h = parseInt(args.height ?? args.width ?? '1024', 10);
     const style = args.style ?? 'dongho';
     const out = args.output ?? `${basename(file).replace(/\.[^.]+$/, '')}-${style}.png`;
     await withPage(async (page, errors) => {
