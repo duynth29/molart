@@ -5,7 +5,9 @@
 Real protein structures drawn as [**Đông Hồ painting**](https://en.wikipedia.org/wiki/%C4%90%C3%B4ng_H%E1%BB%93_painting) (Northern Vietnamese traditional art):
 folk woodblock prints from Đông Hồ village, in the browser.
 
-<img src="docs/dongho-1tim.png" alt="1TIM rendered as a Đông Hồ woodblock print" width="360">
+<img src="docs/molart-dongho.gif" alt="Seven original Đông Hồ prints (top) and the protein 1TIM spinning in each print's style (bottom)" width="320">
+
+<sub>Top: original Đông Hồ prints (Wikimedia Commons, public domain / CC0). Bottom: triosephosphate isomerase (PDB 1TIM) in the matching style.</sub>
 
 [Đông Hồ painting](https://en.wikipedia.org/wiki/%C4%90%C3%B4ng_H%E1%BB%93_painting) is a Northern Vietnamese folk art: Đông Hồ village (Bắc Ninh) has printed pictures for Tết for centuries, one carved block per colour,
 natural pigments on dó paper coated with điệp (crushed scallop shell), and a black key block pressed last.
