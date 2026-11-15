@@ -102,7 +102,7 @@ export class App {
   constructor(root: HTMLElement) {
     const params = new URLSearchParams(location.search);
     this.settings = {
-      style: 'normal',
+      style: 'dongho',
       seed: 7,
       deform: 0,
       exportSize: 2048,
@@ -112,16 +112,16 @@ export class App {
     const pend = store.get<{ style?: string; art?: boolean }>(PENDING_KEY);
     if (pend && typeof pend.style === 'string') {
       const label = allStyles().find((x) => x.id === pend.style)?.label ?? pend.style;
-      this.safeStartNote = `molart did not finish drawing “${label}”${pend.art ? ' in art mode' : ''} last time, so it started in Scientific instead. Please report this style.`;
-      this.settings.style = 'normal';
+      this.safeStartNote = `molart did not finish drawing “${label}”${pend.art ? ' in art mode' : ''} last time, so it started with art mode off. Please report this style.`;
+      this.settings.style = 'dongho';
       this.settings.artMode = false;
       store.set(SETTINGS_KEY, this.settings);
     }
     // one-time: versions before the safe start left no marker, so the first start with it begins from the scientific view
     if (!store.get<boolean>('molart.safeStart.v1')) {
       store.set('molart.safeStart.v1', true);
-      if (this.settings.style !== 'normal' || this.settings.artMode) {
-        this.settings.style = 'normal';
+      if (this.settings.style !== 'dongho' || this.settings.artMode) {
+        this.settings.style = 'dongho';
         this.settings.artMode = false;
         store.set(SETTINGS_KEY, this.settings);
       }
@@ -130,7 +130,7 @@ export class App {
     window.addEventListener('pagehide', () => store.set(PENDING_KEY, null));   // a normal close is not a crash
     if (params.get('style')) this.settings.style = params.get('style')!;
     if (params.get('seed')) this.settings.seed = parseInt(params.get('seed')!, 10) || 0;
-    if (!allStyles().some((s) => s.id === this.settings.style)) this.settings.style = 'normal';
+    if (!allStyles().some((s) => s.id === this.settings.style)) this.settings.style = 'dongho';
     // sanitise anything restored from storage
     const num = (v: unknown, d: number, lo: number, hi: number) => (typeof v === 'number' && Number.isFinite(v) ? Math.min(hi, Math.max(lo, v)) : d);
     this.settings.seed = Math.round(num(this.settings.seed, 7, 0, 2 ** 31));

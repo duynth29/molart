@@ -5,7 +5,7 @@ import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { basename, join } from 'node:path';
 import { launch } from '../cli/browser.mjs';
 
-const [file, outDir = 'outputs/dev', size = '1200', styles = 'normal', seed = '7', deform = '0', camFile] = process.argv.slice(2);
+const [file, outDir = 'outputs/dev', size = '1200', styles = 'dongho', seed = '7', deform = '0', camFile] = process.argv.slice(2);
 mkdirSync(outDir, { recursive: true });
 const server = await createServer({ logLevel: 'error', server: { port: 0 } });
 await server.listen();

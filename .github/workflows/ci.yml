@@ -20,5 +20,5 @@ jobs:
         run: npm run build
       - name: Unit tests
         run: npm test
-      # The browser tests (npm run test:e2e) are run locally: hosted runners have no GPU and
+
       # the software renderer does not finish them within an hour.

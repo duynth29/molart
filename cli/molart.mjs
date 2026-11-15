@@ -14,9 +14,9 @@ const USAGE = `molart — artist-inspired renderings of real protein structures
 usage:
   molart render  <file.pdb|.cif> --style <id> [--width 2400] [--height 2400] [--seed 42]
                  [--deform 0..1] [--colors '#aaaaaa,#bbbbbb'] [--camera cam.json] [--chains A,B]
-                 [--chain-styles A=glass,B=klimt] [--no-faces] [--ascii 0..1] [--art]
+                 [--chain-styles A=dongho] [--no-faces] [--ascii 0..1] [--art]
                  [--output out.png]
-  molart gallery <file.pdb|.cif> [--styles normal,schiele,picasso,klimt,vangogh,dali]
+  molart gallery <file.pdb|.cif> [--styles dongho]
                  [--size 1024] [--seed 42] [--deform 0..1] [--camera cam.json] [--chains A]
                  [--output-dir outputs/]
   molart styles
@@ -37,7 +37,7 @@ function parseChainStyles(v) {
   const out = {};
   for (const part of String(v).split(',')) {
     const m = /^([^=]+)=([a-z0-9]+)$/i.exec(part.trim());
-    if (!m) throw new Error(`--chain-styles expects chain=style pairs, e.g. --chain-styles A=glass,B=klimt (got "${v}")`);
+    if (!m) throw new Error(`--chain-styles expects chain=style pairs, e.g. --chain-styles A=dongho (got "${v}")`);
     out[m[1]] = m[2];
   }
   return out;
@@ -118,7 +118,7 @@ async function main() {
 
   if (cmd === 'render') {
     const w = parseInt(args.width ?? '2400', 10), h = parseInt(args.height ?? args.width ?? '2400', 10);
-    const style = args.style ?? 'normal';
+    const style = args.style ?? 'dongho';
     const out = args.output ?? `${basename(file).replace(/\.[^.]+$/, '')}-${style}.png`;
     await withPage(async (page, errors) => {
       const info = await prepare(page, args, file);
