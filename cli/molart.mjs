@@ -14,7 +14,7 @@ const USAGE = `molart — artist-inspired renderings of real protein structures
 usage:
   molart render  <file.pdb|.cif> --style <id> [--width 2400] [--height 2400] [--seed 42]
                  [--deform 0..1] [--colors '#aaaaaa,#bbbbbb'] [--camera cam.json] [--chains A,B]
-                 [--chain-styles A=dongho] [--no-faces] [--ascii 0..1] [--art]
+                 [--chain-styles A=dongho] [--no-faces] [--ascii 0..1] [--art] [--plain]
                  [--output out.png]
   molart gallery <file.pdb|.cif> [--styles dongho]
                  [--size 1024] [--seed 42] [--deform 0..1] [--camera cam.json] [--chains A]
@@ -22,11 +22,12 @@ usage:
   molart styles
 
 options:
-  --background must be #ffffff (exports are always opaque white); other values are rejected.
+  --background must be #ffffff (the render is on white; the paper is added afterwards unless --plain).
   --camera     JSON {position,target,up,fov} as produced by "Copy camera" in the app.
   --chains     frame the camera on these chains (all chains are still drawn).
   --chain-styles  give chains their own style (chain id = style id); other chains use --style.
   --no-faces   Cartoon style: plain ribbons without faces, heads and arms.
+  --plain      protein on plain white, without the điệp paper and printed frame (default: on paper).
   --art        Art mode: styles that define one draw simplified or reshaped forms instead of the true ribbon.
   --ascii      ASCII Fold style: share of the picture drawn as text, 0 (ribbon only) .. 1 (text only); default 0.5.
   --colors     two hex colours for styles with a colour choice (glass): helices/strands, loops/edges.
@@ -130,7 +131,7 @@ async function main() {
         await page.evaluate((m) => window.molart.setChainStyles(m), cs);
       }
       if (args.colors) await page.evaluate((c) => window.molart.setColors(c[0], c[1]), parseColors(args.colors));
-      const b64 = await page.evaluate(([W, H]) => window.molart.exportPNGBase64(W, H), [w, h]);
+      const b64 = await page.evaluate(([W, H, P]) => window.molart.exportPNGBase64(W, H, P), [w, h, !args.plain]);
       mkdirSync(dirname(resolve(out)), { recursive: true });
       writeFileSync(out, Buffer.from(b64, 'base64'));
       const cam = await page.evaluate(() => window.molart.getCamera());

@@ -67,7 +67,8 @@ const api = {
       fingerprint: coordinateFingerprint(s),
     };
   },
-  exportPNGBase64: async (w: number, h: number) => blobToBase64(await app.r.exportPNG(w, h)),
+  /** paper: print onto điệp paper with a frame (default), false for the protein on plain white */
+  exportPNGBase64: async (w: number, h: number, paper = true) => blobToBase64(await app.r.exportPNG(w, h, paper ? app.paperPost() : undefined)),
   /** Returns raw RGBA statistics for verification (corner pixels, alpha range). */
   exportStats: (w: number, h: number) => {
     const px = app.r.renderPixels(w, h);

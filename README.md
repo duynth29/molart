@@ -24,7 +24,7 @@ This renderer prints the protein the same way:
   the plump rounded forms of the prints and curls the loops.
 - **Local.** Files you open stay in your browser. Fetching by PDB ID is an explicit button and
   goes to files.rcsb.org.
-- **Export.** White-background PNG up to 4K; `scripts/dongho_paper.py` lays it onto giấy điệp paper with a printed frame.
+- **Export.** PNG up to 4K, printed on shimmering giấy điệp paper with a framed border (untick *Paper & frame* for plain white).
 
 ## Run
 
@@ -42,8 +42,8 @@ Renders with the same code as the app, in headless Chromium
 (`npx playwright-core install chromium`).
 
 ```sh
-node cli/molart.mjs render public/samples/1TIM.cif --width 2400 --height 2400 --output 1tim.png
-python3 scripts/dongho_paper.py 1tim.png 1tim_dongho.png    # needs Pillow and numpy
+node cli/molart.mjs render public/samples/1TIM.cif --width 2400 --height 2400 --output 1tim.png   # on paper; --plain for white
+python3 scripts/dongho_paper.py plain.png print.png         # same paper as a standalone script (Pillow, numpy)
 ```
 
 ## Credits

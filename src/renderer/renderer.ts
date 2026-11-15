@@ -987,8 +987,10 @@ export class MolartRenderer {
     return px;
   }
 
-  async exportPNG(width: number, height: number): Promise<Blob> {
+  /** `post` may change the finished pixels in place before encoding (e.g. print them onto paper). */
+  async exportPNG(width: number, height: number, post?: (px: Uint8ClampedArray, w: number, h: number) => void): Promise<Blob> {
     const px = this.renderPixels(width, height);
+    post?.(px, width, height);
     const c = document.createElement('canvas');
     c.width = width;
     c.height = height;

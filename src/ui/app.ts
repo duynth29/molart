@@ -1,4 +1,5 @@
 import { loadStructure } from '../io/load';
+import { printOnPaper } from './paper';
 import { coordinateFingerprint, Structure } from '../model/structure';
 import { allStyles, getStyle } from '../art/registry';
 import { CameraState, MolartRenderer, RENDERER_VERSION } from '../renderer/renderer';
@@ -17,6 +18,8 @@ interface Settings {
   /** artistic deformation per style (each style's slider is opt-in on its own) */
   deforms?: Record<string, number>;
   exportSize: number;
+  /** export onto điệp paper with a printed frame (default) instead of plain white */
+  paper?: boolean;
   /** User-chosen colours per style id (two sRGB hex strings), for styles that offer a colour choice. */
   colors?: Record<string, [string, string]>;
   /** Per-structure chain styles: structure id → (chain id → style id). Chains not listed use the main style. */
@@ -246,6 +249,13 @@ export class App {
       this.settings.exportSize = parseInt(size.value, 10);
       this.saveSettings();
     });
+    const paperBox = h('input', { type: 'checkbox', id: 'paperBox' }) as HTMLInputElement;
+    paperBox.checked = this.settings.paper !== false;
+    paperBox.addEventListener('change', () => {
+      this.settings.paper = paperBox.checked;
+      this.saveSettings();
+    });
+    const paperLabel = h('label', { class: 'paper', for: 'paperBox', title: 'Export on giấy điệp paper with a printed frame' }, paperBox, ' Paper & frame');
     const exportBtn = h('button', { class: 'primary' }, 'Export');
     exportBtn.addEventListener('click', () => void this.downloadPNG());
     const galleryBtn = h('button', {}, 'Same-view gallery');
@@ -313,7 +323,7 @@ export class App {
     closeBtn.addEventListener('click', () => setDrawer(false));
     scrim.addEventListener('click', () => setDrawer(false));
     window.addEventListener('keydown', (e) => e.key === 'Escape' && setDrawer(false));
-    const top = h('div', { class: 'top' }, h('div', { class: 'brand' }, h('h1', {}, 'molart'), els.name, els.hint), h('div', { class: 'row' }, moreBtn, exportBtn));
+    const top = h('div', { class: 'top' }, h('div', { class: 'brand' }, h('h1', {}, 'molart'), els.name, els.hint), h('div', { class: 'row' }, paperLabel, moreBtn, exportBtn));
     const dock = h(
       'footer',
       { class: 'dock' },
@@ -661,13 +671,20 @@ export class App {
     this.saveSettings();
   }
 
+  /** Post-process for exports: print onto điệp paper, with the paper's grain fixed by the seed. */
+  paperPost() {
+    const seed = this.settings.seed;
+    return (px: Uint8ClampedArray, w: number, h: number) => printOnPaper(px, w, h, seed);
+  }
+
   /** Export: show the PNG in a dialog (works where downloads are blocked) with a download link. */
   async downloadPNG() {
     if (!this.structure) return;
     const n = this.settings.exportSize;
-    const blob = await this.r.exportPNG(n, n);
-    const name = `${this.structure.id}-${this.settings.style}-seed${this.settings.seed}-${n}.png`;
-    this.showImageDialog(blob, name, `${name} · ${n} × ${n} px · opaque white background`, `Exported ${this.settings.style} rendering of ${this.structure.id}`);
+    const paper = this.settings.paper !== false;
+    const blob = await this.r.exportPNG(n, n, paper ? this.paperPost() : undefined);
+    const name = `${this.structure.id}-${this.settings.style}-seed${this.settings.seed}-${n}${paper ? '-print' : ''}.png`;
+    this.showImageDialog(blob, name, `${name} · ${n} × ${n} px · ${paper ? 'on điệp paper with frame' : 'opaque white background'}`, `Exported ${this.settings.style} rendering of ${this.structure.id}`);
   }
 
   private showImageDialog(blob: Blob, name: string, title: string, alt: string) {
