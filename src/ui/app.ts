@@ -269,7 +269,7 @@ export class App {
       return e;
     };
     const capPos = sel('Text position', [['top', 'Top'], ['bottom', 'Bottom'], ['side', 'Side column']], cap.position);
-    const capFont = sel('Text font', [['sign', 'Sign-painted'], ['serif', 'Woodblock serif'], ['brush', 'Brush script']], cap.font);
+    const capFont = sel('Text font', [['lactu', 'Lạc Tự (Lost Type)'], ['serif', 'Woodblock serif'], ['brush', 'Brush script']], cap.font);
     const capColor = sel('Text colour', [['black', 'Black ink'], ['red', 'Red ink']], cap.color);
     const capChange = () => {
       this.settings.caption = sanitizeCaption({ text: capText.value, auto: false, position: capPos.value, font: capFont.value, color: capColor.value });
@@ -283,7 +283,7 @@ export class App {
       if (keep) { this.settings.caption!.auto = true; this.saveSettings(); }
     });
     els.capText = capText;
-    const textSection = h('section', {}, h('h2', {}, 'Text on the print'), h('div', { class: 'row' }, capText), h('div', { class: 'row' }, capPos, capFont, capColor), h('p', { class: 'technique' }, 'Printed on the exported picture (not in the live view). Vietnamese diacritics are supported.'));
+    const textSection = h('section', {}, h('h2', {}, 'Text on the print'), h('div', { class: 'row' }, capText), h('div', { class: 'row' }, capPos, capFont, capColor), h('p', { class: 'technique' }, 'Printed on the exported picture (not in the live view). Vietnamese diacritics are supported. Lạc Tự font: Lost Type 2023 by Mack Trinh and Đức-Hải “Harry” Đinh.'));
     const textBtn = h('button', { title: 'Add text to the exported print' }, 'Text');
     textBtn.addEventListener('click', () => {
       setDrawerRef?.(true);

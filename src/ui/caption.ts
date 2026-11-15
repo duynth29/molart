@@ -5,7 +5,7 @@
  */
 
 export type CaptionPosition = 'top' | 'bottom' | 'side';
-export type CaptionFont = 'sign' | 'serif' | 'brush';
+export type CaptionFont = 'lactu' | 'serif' | 'brush';
 export type CaptionColor = 'black' | 'red';
 
 export interface Caption {
@@ -17,15 +17,15 @@ export interface Caption {
   color: CaptionColor;
 }
 
-export const defaultCaption: Caption = { text: '', auto: true, position: 'top', font: 'sign', color: 'black' };
+export const defaultCaption: Caption = { text: '', auto: true, position: 'top', font: 'lactu', color: 'black' };
 
 const FAMILY: Record<CaptionFont, string> = {
-  // rounded, boxy sign-painter capitals in the spirit of VPS Đồng Hới, with full Unicode Vietnamese (SIL OFL)
-  sign: '"Bungee", "Chakra Petch", Impact, sans-serif',
+  // Lạc Tự / Lost Type 2023 by Mack Trinh and Đức-Hải Đinh: Vietnamese storefront slab capitals, served from public/fonts
+  lactu: '"Lost Type 2023", Georgia, serif',
   serif: '"Playfair Display", "Noto Serif", Georgia, serif',
   brush: '"Dancing Script", "Brush Script MT", cursive',
 };
-const WEIGHT: Record<CaptionFont, number> = { sign: 400, serif: 900, brush: 700 };
+const WEIGHT: Record<CaptionFont, number> = { lactu: 400, serif: 900, brush: 700 };
 const INK: Record<CaptionColor, [number, number, number]> = { black: [28, 26, 23], red: [178, 52, 34] };
 
 export function sanitizeCaption(c: unknown): Caption {
@@ -34,14 +34,21 @@ export function sanitizeCaption(c: unknown): Caption {
     text: typeof o.text === 'string' ? o.text.slice(0, 200) : '',
     auto: typeof o.auto === 'boolean' ? o.auto : !o.text,   // older saved settings: keep text someone already typed
     position: o.position === 'bottom' || o.position === 'side' ? o.position : 'top',
-    font: o.font === 'brush' || o.font === 'serif' ? o.font : 'sign',
+    font: o.font === 'brush' || o.font === 'serif' ? o.font : 'lactu',
     color: o.color === 'red' ? 'red' : 'black',
   };
 }
 
 /** Wait for the caption's web font (with the glyphs this text needs) so the export never falls back mid-way. */
+let lactuFace: FontFace | null = null;
+
 export async function loadCaptionFont(c: Caption): Promise<void> {
   if (!c.text.trim() || typeof document === 'undefined' || !document.fonts) return;
+  if (c.font === 'lactu' && !lactuFace) {
+    // relative to the page, so it works under the GitHub Pages sub-path too
+    lactuFace = new FontFace('Lost Type 2023', `url(${new URL('fonts/LostType2023-Regular.otf', document.baseURI).href})`);
+    document.fonts.add(lactuFace);
+  }
   const fam = FAMILY[c.font].split(',')[0];
   try {
     await Promise.race([document.fonts.load(`${WEIGHT[c.font]} 48px ${fam}`, c.text), new Promise((r) => setTimeout(r, 4000))]);

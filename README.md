@@ -36,7 +36,7 @@ shape is never changed into the print's figures):
 ## Text
 
 Add a title or verse to the exported print (the **Text** button): across the top, along the bottom, or as a
-vertical column of words at the side (by default the structure's PDB ID); sign-painted capitals (Bungee, the default), woodblock serif or brush script; black or red ink. Vietnamese diacritics
+vertical column of words at the side (by default the structure's PDB ID); Lạc Tự (Lost Type, the default), woodblock serif or brush script; black or red ink. Vietnamese diacritics
 are supported, and the protein shrinks to leave room for the words.
 
 ## Features
@@ -74,6 +74,8 @@ python3 scripts/dongho_paper.py plain.png print.png         # same paper as a st
 
 - Fork of [molart](https://github.com/martin-steinegger/molart) by Martin Steinegger, which renders the
   same structures in many artist-inspired styles; this fork keeps only the Đông Hồ style.
+- The Lạc Tự text font is [Lost Type 2023](https://www.behance.net/gallery/182490113/Lost-Type-(New-Version)-Free-Font)
+  by Mack Trinh and Đức-Hải "Harry" Đinh, free to use with credit; it is in `public/fonts/`.
 - molart was inspired by Sergey Ovchinnikov's protein structure visualization in
   [LocalFold](https://github.com/sokrypton/localfold).
 - Sample structures in `public/samples/` (1TIM, 3CHY, 1UBQ, 4HHB) are unmodified downloads from

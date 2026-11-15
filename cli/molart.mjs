@@ -15,7 +15,7 @@ usage:
   molart render  <file.pdb|.cif> --style <id> [--width 1024] [--height 1024] [--seed 42]
                  [--deform 0..1] [--colors '#aaaaaa,#bbbbbb'] [--camera cam.json] [--chains A,B]
                  [--chain-styles A=dongho] [--no-faces] [--ascii 0..1] [--art] [--plain]
-                 [--text 'Phúc Lộc Thọ'] [--text-position top|bottom|side] [--text-font sign|serif|brush] [--text-color black|red]
+                 [--text 'Phúc Lộc Thọ'] [--text-position top|bottom|side] [--text-font lactu|serif|brush] [--text-color black|red]
                  [--output out.png]
   molart gallery <file.pdb|.cif> [--styles dongho]
                  [--size 1024] [--seed 42] [--deform 0..1] [--camera cam.json] [--chains A]
@@ -99,7 +99,7 @@ async function prepare(page, args, file) {
     if (!(v >= 0 && v <= 1)) throw new Error(`--ascii expects a number from 0 to 1 (got "${args.ascii}")`);
     await page.evaluate((x) => window.molart.setAsciiAmount(x), v);
   }
-  const style = { position: args['text-position'] ?? 'top', font: args['text-font'] ?? 'sign', color: args['text-color'] ?? 'black' };
+  const style = { position: args['text-position'] ?? 'top', font: args['text-font'] ?? 'lactu', color: args['text-color'] ?? 'black' };
   // default text: the PDB ID; --text replaces it, --no-text prints none
   const cap = args['no-text'] ? { ...style, text: '', auto: false } : args.text ? { ...style, text: String(args.text), auto: false } : { ...style, auto: true };
   await page.evaluate((c) => window.molart.setCaption(c), cap);
