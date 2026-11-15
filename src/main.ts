@@ -70,7 +70,7 @@ const api = {
   /** paper: print onto điệp paper with a frame (default), false for the protein on plain white */
   exportPNGBase64: async (w: number, h: number, paper = true) => blobToBase64(await app.r.exportPNG(w, h, await app.exportPost(paper))),
   /** Text printed on exports: { text, position: top|bottom|side, font: serif|brush, color: black|red }; null clears it. */
-  setCaption: (c: Record<string, string> | null) => app.setCaption(c as never),
+  setCaption: (c: Record<string, string | boolean> | null) => app.setCaption(c as never),
   /** Returns raw RGBA statistics for verification (corner pixels, alpha range). */
   exportStats: (w: number, h: number) => {
     const px = app.r.renderPixels(w, h);

@@ -262,7 +262,7 @@ export class App {
     const paperLabel = h('label', { class: 'paper', for: 'paperBox', title: 'Export on giấy điệp paper with a printed frame' }, paperBox, ' Paper & frame');
     let setDrawerRef: ((open: boolean) => void) | undefined;
     const cap = this.settings.caption!;
-    const capText = h('input', { type: 'text', value: cap.text, maxlength: '200', placeholder: 'e.g. Phúc Lộc Thọ', 'aria-label': 'Text on the print', style: 'flex:1;min-width:0' }) as HTMLInputElement;
+    const capText = h('input', { type: 'text', value: cap.auto ? '' : cap.text, maxlength: '200', placeholder: 'PDB ID', title: 'Starts as the PDB ID; type your own text, or clear it for none', 'aria-label': 'Text on the print', style: 'flex:1;min-width:0' }) as HTMLInputElement;
     const sel = (label: string, opts: [string, string][], v: string) => {
       const e = h('select', { 'aria-label': label }, ...opts.map(([val, t]) => h('option', { value: val }, t))) as HTMLSelectElement;
       e.value = v;
@@ -272,11 +272,17 @@ export class App {
     const capFont = sel('Text font', [['sign', 'Sign-painted'], ['serif', 'Woodblock serif'], ['brush', 'Brush script']], cap.font);
     const capColor = sel('Text colour', [['black', 'Black ink'], ['red', 'Red ink']], cap.color);
     const capChange = () => {
-      this.settings.caption = sanitizeCaption({ text: capText.value, position: capPos.value, font: capFont.value, color: capColor.value });
+      this.settings.caption = sanitizeCaption({ text: capText.value, auto: false, position: capPos.value, font: capFont.value, color: capColor.value });
       this.saveSettings();
     };
     capText.addEventListener('input', capChange);
-    for (const e of [capPos, capFont, capColor]) e.addEventListener('change', capChange);
+    // style changes keep the PDB ID as the text while it is still the default
+    for (const e of [capPos, capFont, capColor]) e.addEventListener('change', () => {
+      const keep = this.settings.caption!.auto;
+      capChange();
+      if (keep) { this.settings.caption!.auto = true; this.saveSettings(); }
+    });
+    els.capText = capText;
     const textSection = h('section', {}, h('h2', {}, 'Text on the print'), h('div', { class: 'row' }, capText), h('div', { class: 'row' }, capPos, capFont, capColor), h('p', { class: 'technique' }, 'Printed on the exported picture (not in the live view). Vietnamese diacritics are supported.'));
     const textBtn = h('button', { title: 'Add text to the exported print' }, 'Text');
     textBtn.addEventListener('click', () => {
@@ -603,6 +609,7 @@ export class App {
     try {
       const s = loadStructure(text, name.replace(/ \(.*\)$/, ''));
       this.structure = s;
+      this.syncCaptionField();
       this.fileName = name;
       this.isSample = false;
       this.els.hint.classList.add('hidden');
@@ -708,7 +715,7 @@ export class App {
   /** Post-process for exports: print onto điệp paper (grain fixed by the seed), then the text. */
   async exportPost(paper: boolean) {
     const seed = this.settings.seed;
-    const cap = sanitizeCaption(this.settings.caption);
+    const cap = this.captionNow();
     await loadCaptionFont(cap);
     return (px: Uint8ClampedArray, w: number, h: number) => {
       makeRoom(px, w, h, cap);
@@ -717,9 +724,23 @@ export class App {
     };
   }
 
+  /** The caption as printed: the PDB ID while the text is still the default. */
+  private captionNow(): Caption {
+    const cap = sanitizeCaption(this.settings.caption);
+    return cap.auto ? { ...cap, text: this.structure?.id ?? '' } : cap;
+  }
+
   setCaption(c: Partial<Caption> | null) {
     this.settings.caption = sanitizeCaption(c ? { ...this.settings.caption, ...c } : null);
     this.saveSettings();
+    this.syncCaptionField();
+  }
+
+  /** Show the PDB ID in the text field while it is the default text. */
+  private syncCaptionField() {
+    const f = this.els.capText as HTMLInputElement | undefined;
+    const cap = this.settings.caption;
+    if (f && cap?.auto) f.value = this.structure?.id ?? '';
   }
 
   /** Export: show the PNG in a dialog (works where downloads are blocked) with a download link. */

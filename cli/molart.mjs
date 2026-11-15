@@ -28,7 +28,7 @@ options:
   --chains     frame the camera on these chains (all chains are still drawn).
   --chain-styles  give chains their own style (chain id = style id); other chains use --style.
   --no-faces   Cartoon style: plain ribbons without faces, heads and arms.
-  --text       text printed on the picture (Vietnamese diacritics supported); --text-position, --text-font, --text-color style it.
+  --text       text printed on the picture (default: the PDB ID; --no-text for none; Vietnamese diacritics supported); --text-position, --text-font, --text-color style it.
   --plain      protein on plain white, without the điệp paper and printed frame (default: on paper).
   --art        Art mode: styles that define one draw simplified or reshaped forms instead of the true ribbon.
   --ascii      ASCII Fold style: share of the picture drawn as text, 0 (ribbon only) .. 1 (text only); default 0.5.
@@ -99,7 +99,10 @@ async function prepare(page, args, file) {
     if (!(v >= 0 && v <= 1)) throw new Error(`--ascii expects a number from 0 to 1 (got "${args.ascii}")`);
     await page.evaluate((x) => window.molart.setAsciiAmount(x), v);
   }
-  await page.evaluate((c) => window.molart.setCaption(c), args.text ? { text: String(args.text), position: args['text-position'] ?? 'top', font: args['text-font'] ?? 'sign', color: args['text-color'] ?? 'black' } : null);
+  const style = { position: args['text-position'] ?? 'top', font: args['text-font'] ?? 'sign', color: args['text-color'] ?? 'black' };
+  // default text: the PDB ID; --text replaces it, --no-text prints none
+  const cap = args['no-text'] ? { ...style, text: '', auto: false } : args.text ? { ...style, text: String(args.text), auto: false } : { ...style, auto: true };
+  await page.evaluate((c) => window.molart.setCaption(c), cap);
   if (args.chains) await page.evaluate((c) => window.molart.frameChains(c.split(',')), args.chains);
   else await page.evaluate(() => window.molart.resetCamera());
   if (args.camera) await page.evaluate((c) => window.molart.setCamera(c), JSON.parse(readFileSync(args.camera, 'utf8')));

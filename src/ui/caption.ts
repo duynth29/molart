@@ -10,12 +10,14 @@ export type CaptionColor = 'black' | 'red';
 
 export interface Caption {
   text: string;
+  /** print the structure's PDB ID instead of `text` (the default, until the user types their own) */
+  auto: boolean;
   position: CaptionPosition;
   font: CaptionFont;
   color: CaptionColor;
 }
 
-export const defaultCaption: Caption = { text: '', position: 'top', font: 'sign', color: 'black' };
+export const defaultCaption: Caption = { text: '', auto: true, position: 'top', font: 'sign', color: 'black' };
 
 const FAMILY: Record<CaptionFont, string> = {
   // rounded, boxy sign-painter capitals in the spirit of VPS Đồng Hới, with full Unicode Vietnamese (SIL OFL)
@@ -30,6 +32,7 @@ export function sanitizeCaption(c: unknown): Caption {
   const o = (c && typeof c === 'object' ? c : {}) as Partial<Caption>;
   return {
     text: typeof o.text === 'string' ? o.text.slice(0, 200) : '',
+    auto: typeof o.auto === 'boolean' ? o.auto : !o.text,   // older saved settings: keep text someone already typed
     position: o.position === 'bottom' || o.position === 'side' ? o.position : 'top',
     font: o.font === 'brush' || o.font === 'serif' ? o.font : 'sign',
     color: o.color === 'red' ? 'red' : 'black',
